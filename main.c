@@ -22,11 +22,24 @@ void ft_putstr(char* str) {
 
 }
 
+int ft_strlen(char* str) {
+
+    int count = 0;
+
+    while(*str != '\0') {
+        str++;
+        count++;
+    }
+
+
+    return count;
+}
+
 int main() {
 
-    char str[] = "hello hehe";
+    char str[] = "hello";
 
-   ft_putstr(str);
+   printf("%d\n", ft_strlen(str));
 
    return 0;
 }
