@@ -1,20 +1,35 @@
 #include <stdio.h>
+#include <unistd.h>
 
-void swap(int* a, int* b) {
+void ft_div_mod(int a, int b, int* div, int* mod) {
+    
+    *div = a / b;
+    *mod = a % b;
+}
+
+void ft_ultimate_div_mod(int* a, int* b) {
     
     int temp = *a;
-    *a = *b;
-    *b = temp;
+    *a = (*a / *b);
+    *b = (temp % *b);
+}
+
+void ft_putstr(char* str) {
+
+    while(*str != '\0') {
+        write(1, str++, 1);
+    }
+
 }
 
 int main() {
 
-    int a = 21;
-    int b = 3;
+    char str[] = "hello hehe";
 
-    printf("Before: a = %d, b = %d\n", a, b);
+   ft_putstr(str);
 
-    swap(&a, &b);
-
-    printf("After: a = %d, b = %d\n", a, b);
+   return 0;
 }
+
+
+
