@@ -2,10 +2,10 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
-
-
+#include <string.h>
 
 // write malloc free open close read
+
 
 
 int my_pow(int num, int exponent) {
@@ -20,63 +20,167 @@ int my_pow(int num, int exponent) {
     return res;
 }
 
+int calculate_exponent(int num) {
 
+    int t_num = num;
 
-void print_num(unsigned int num) {
-
-    unsigned int t_num = num;
-
-    int count = 0;
+    int exponent = 0;
 
     while(t_num > 0) {
 
-        t_num /= 10, count++;
+        exponent++, t_num /= 10;
 
     }
 
-    char* str = (char*) malloc(count + 1); // + '\0'
+    return exponent - 1;
+}
 
-    str[count] = '\0';
+int reverse(int num) {
 
-    int index = count;
+    int res = 0;
 
-    while(index > 0) {
 
-        str[index - 1] = (num % 10) + '0';
+    while(num > 0) {
 
-        index--, num /= 10;
+        res = (10 * res) + (num % 10);
+
+        num /= 10;
     }
 
-    char* print = (char*) calloc(500, sizeof(char));
+    return res;
+}
 
-    int fd = open("numbers.dict", O_RDONLY);
+char* stringify(int num) {
 
-    // int sz = read(fd, print, 200);
+    char* str = malloc(25);      // 70
 
-    // printf("%s\n", print);
+    int index = calculate_exponent(num);
 
-    int bit = 1, exp = 1, i = 1;
+    int last = index + 1;
 
+    while(num > 0) {
 
-    while(exp < count) {
+        str[index--] = (num % 10) + '0';
 
-        if(print[bit] >= '0' && print[bit] <= '9') {
-            printf("%c\n", print[bit]);  
-            exp++;
+        num /= 10;
+    }
+    
+    str[last] = '\0';
+
+    return str;
+
+}
+
+void print_current_digit(char* buffer, int target) {
+
+    int index = 0;
+
+    char str[70];
+
+    int str_index = 0;
+
+    while(buffer[index] - '0' != target) {
+        index++;
+    }
+
+    while(buffer[index] != '\n') {
+
+        if(buffer[index] >= 'A' && buffer[index] <= 'z') {
+
+            str[str_index] = buffer[index];
+            str_index++;
         }
 
-        int sz = read(fd, print, 10);
+        index++;
+    
+    }
 
-        bit++;
+    str[str_index] = '\0';
+
+    printf("%s ", str);
+}
+
+void print_current_element(char* buffer, char* target) {
+   
+    int index = 0;
+
+    char str[70];
+
+    int str_index = 0;
+
+    char* buffer_pointer = strstr(buffer, target);
+
+    while(*buffer_pointer != '\n') {
+
+        if(*buffer_pointer >= 'A' && *buffer_pointer <= 'z') {
+
+            str[str_index] = *buffer_pointer;
+            str_index++;
+        }
+
+       buffer_pointer++;
+    
+    }
+
+    str[str_index] = '\0';
+
+    printf("%s ", str); 
+}
+
+
+
+void print_num(unsigned int num) {                  //   7
+
+    int exponent = calculate_exponent(num);
+
+    num = reverse(num);
+    int fd = open("numbers.dict", O_RDONLY);
+
+    int buffer_size = 1000;
+    char* buffer = malloc(buffer_size);
+
+    int sz = read(fd, buffer, 690);
+    buffer[690] = '\0';
+
+    while(num > 0) {
+
+        int digit = (num % 10);
+        int rhs = my_pow(10, exponent--);
+
+        char* current = stringify(rhs);
+
+        if(digit * rhs == 0) {
+            
+            num /= 10;
+            continue;
+
+        }
+
+        if(digit * rhs < 100) {
+
+            print_current_element(buffer, current);
+
+        }
+
+        else if((digit * rhs >= 100) && ((digit * rhs) % 10 == 0)) {
+
+            print_current_digit(buffer, digit);
+
+            print_current_element(buffer, current);
+            
+        }
+
+        free(current);
+
+        num /= 10;
 
     }
 
-    printf("%d\n", exp);    
+    printf("\n");
+    
+    free(buffer);
 
     int cl = close(fd);
-
-    free(str);
-    free(print);
 
 }
 
@@ -84,8 +188,7 @@ void print_num(unsigned int num) {
 
 int main() {
 
-    print_num(1488);
+    print_num(6501);
 
     return 0;
 }
-
