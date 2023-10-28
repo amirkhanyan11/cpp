@@ -127,9 +127,9 @@ void print_current_element(char* buffer, char* target) {
     printf("%s ", str); 
 }
 
+void print_num(int num) {                  //   7
 
-
-void print_num(unsigned int num) {                  //   7
+    printf("\n%d --->  ", num);
 
     int exponent = calculate_exponent(num);
 
@@ -146,12 +146,14 @@ void print_num(unsigned int num) {                  //   7
 
         int digit = (num % 10);
         int rhs = my_pow(10, exponent--);
+        
+        int expression = digit * rhs;
 
         char* current = stringify(rhs);
 
-        char* current_dig = stringify(digit * rhs);
+        char* current_dig = stringify(expression);
 
-        if(digit * rhs == 0) {
+        if(digit == 0) {
             
             num /= 10;
             continue;
@@ -159,19 +161,31 @@ void print_num(unsigned int num) {                  //   7
         }
 
 
-        if(num < 10) {
+        if(expression < 10) {
             
             print_current_digit(buffer, digit);
         }
 
 
-        else if(digit * rhs < 100) {
+        if(reverse(num) > 10 && reverse(num) <= 20) {
+
+            char* tmp = stringify(reverse(num));
+
+            print_current_element(buffer, tmp);
+
+            num /= 10;
+
+            free(tmp);
+        }
+
+
+        else if(expression < 100) {
 
             print_current_element(buffer, current_dig);
 
         }
 
-        else if((digit * rhs >= 100) && ((digit * rhs) % 10 == 0)) {
+        else if((expression >= 100) && ((expression) % 10 == 0)) {
 
             print_current_digit(buffer, digit);
 
@@ -197,7 +211,17 @@ void print_num(unsigned int num) {                  //   7
 
 int main() {
 
-    print_num(1488);
+    int x = 0;
+
+    while(1) {
+
+        printf("\n Enter the number : ");
+        scanf("%d", &x);
+
+        print_num(x);
+    }
+
+    
 
     return 0;
 }
