@@ -161,12 +161,6 @@ void print_num(int num) {                  //   7
         }
 
 
-        if(expression < 10) {
-            
-            print_current_digit(buffer, digit);
-        }
-
-
         if(reverse(num) > 10 && reverse(num) <= 20) {
 
             char* tmp = stringify(reverse(num));
@@ -192,6 +186,7 @@ void print_num(int num) {                  //   7
             print_current_element(buffer, current);
             
         }
+
 
         free(current);
 
