@@ -149,6 +149,8 @@ void print_num(unsigned int num) {                  //   7
 
         char* current = stringify(rhs);
 
+        char* current_dig = stringify(digit * rhs);
+
         if(digit * rhs == 0) {
             
             num /= 10;
@@ -156,9 +158,16 @@ void print_num(unsigned int num) {                  //   7
 
         }
 
-        if(digit * rhs < 100) {
 
-            print_current_element(buffer, current);
+        if(num < 10) {
+            
+            print_current_digit(buffer, digit);
+        }
+
+
+        else if(digit * rhs < 100) {
+
+            print_current_element(buffer, current_dig);
 
         }
 
@@ -188,7 +197,7 @@ void print_num(unsigned int num) {                  //   7
 
 int main() {
 
-    print_num(6501);
+    print_num(1488);
 
     return 0;
 }
