@@ -7,7 +7,6 @@
 // write malloc free open close read
 
 
-
 int my_pow(int num, int exponent) {
 
     int res = 1;
@@ -38,7 +37,6 @@ int calculate_exponent(int num) {
 int reverse(int num) {
 
     int res = 0;
-
 
     while(num > 0) {
 
@@ -71,37 +69,10 @@ char* stringify(int num) {
 
 }
 
-void print_current_digit(char* buffer, int target) {
-
-    int index = 0;
-
-    char str[70];
-
-    int str_index = 0;
-
-    while(buffer[index] - '0' != target) {
-        index++;
-    }
-
-    while(buffer[index] != '\n') {
-
-        if(buffer[index] >= 'A' && buffer[index] <= 'z') {
-
-            str[str_index] = buffer[index];
-            str_index++;
-        }
-
-        index++;
-    
-    }
-
-    str[str_index] = '\0';
-
-    printf("%s ", str);
-}
-
-void print_current_element(char* buffer, char* target) {
+void print_current_element(char* buffer, int num) {
    
+    char* target = stringify(num);
+    
     int index = 0;
 
     char str[70];
@@ -124,19 +95,32 @@ void print_current_element(char* buffer, char* target) {
 
     str[str_index] = '\0';
 
-    printf("%s ", str); 
+    free(target);
+
+    write(1, str, str_index);
+    write(1, " ", 1); 
 }
 
 void print_num(int num) {                  //   7
 
+
     printf("\n%d --->  ", num);
 
+
+    if(num == 0) {
+
+        write(1, "zero", 4);
+        return;
+
+    }
+
+    
     int exponent = calculate_exponent(num);
 
     num = reverse(num);
     int fd = open("numbers.dict", O_RDONLY);
 
-    int buffer_size = 1000;
+    int buffer_size = 700;
     char* buffer = malloc(buffer_size);
 
     int sz = read(fd, buffer, 690);
@@ -145,13 +129,10 @@ void print_num(int num) {                  //   7
     while(num > 0) {
 
         int digit = (num % 10);
-        int rhs = my_pow(10, exponent--);
+        int power_of_10 = my_pow(10, exponent--);
         
-        int expression = digit * rhs;
+        int expression = digit * power_of_10;
 
-        char* current = stringify(rhs);
-
-        char* current_dig = stringify(expression);
 
         if(digit == 0) {
             
@@ -160,48 +141,55 @@ void print_num(int num) {                  //   7
 
         }
 
-
-        if(reverse(num) > 10 && reverse(num) <= 20) {
-
-            char* tmp = stringify(reverse(num));
-
-            print_current_element(buffer, tmp);
+        if(expression < 20) {
 
             num /= 10;
 
-            free(tmp);
-        }
+            expression += num % 10;
 
+            print_current_element(buffer, expression);
+
+        }
 
         else if(expression < 100) {
 
-            print_current_element(buffer, current_dig);
+            print_current_element(buffer, expression);
+
 
         }
 
-        else if((expression >= 100) && ((expression) % 10 == 0)) {
+        else if(expression < 10000) {
 
-            print_current_digit(buffer, digit);
+            print_current_element(buffer, digit);
 
-            print_current_element(buffer, current);
-            
+            print_current_element(buffer, power_of_10);    
         }
 
+        else if((expression >= 10000 && expression <= 100000)) {
 
-        free(current);
+            num /= 10;
+
+            print_current_element(buffer, (expression / 1000));
+
+            print_current_element(buffer, (num % 10));
+
+            print_current_element(buffer, power_of_10 / 10);
+
+            exponent--;
+        }
 
         num /= 10;
 
     }
 
-    printf("\n");
+
+    write(1, "\n", 1);
     
     free(buffer);
 
     int cl = close(fd);
 
 }
-
 
 
 int main() {
@@ -215,8 +203,6 @@ int main() {
 
         print_num(x);
     }
-
-    
 
     return 0;
 }
